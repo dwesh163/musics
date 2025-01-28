@@ -127,6 +127,7 @@ export async function getRightSidebarData(): Promise<RightSidebarType | null> {
 			{
 				$group: {
 					_id: '$artist._id',
+					id: { $first: '$artist.id' },
 					name: { $first: '$artist.name' },
 					imageUrl: { $first: '$artist.imageUrl' },
 					subscribers: { $first: '$artist.subscribers' },
@@ -139,7 +140,7 @@ export async function getRightSidebarData(): Promise<RightSidebarType | null> {
 			{
 				$project: {
 					_id: 0,
-					id: '$_id',
+					id: 1,
 					name: 1,
 					imageUrl: 1,
 					subscribers: 1,
