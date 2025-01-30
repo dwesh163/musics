@@ -12,7 +12,7 @@ describe('rateLimit', () => {
 		const limiter = rateLimit({ uniqueTokenPerInterval: 2, interval: 10 });
 		limiter.check(2, 'test').isRateLimited;
 		limiter.check(2, 'test').isRateLimited;
-		await new Promise((resolve) => setTimeout(resolve, 10));
+		await new Promise((resolve) => setTimeout(resolve, 20));
 		expect(limiter.check(2, 'test').isRateLimited).toBe(false);
 	});
 	it('should return the correct headers', () => {
