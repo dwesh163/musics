@@ -1,21 +1,34 @@
 name: Test if the code is working and is properly linted
 
 on:
-  pull_request:
-    branches:
-      - main
+	pull_request:
+		branches:
+			- main
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
+	test:
+		runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+		steps:
+			- name: Checkout repository
+				uses: actions/checkout@v4
 
-      - name: Install dependencies
-        run: npm install
+			- name: Install dependencies
+				run: npm install
 
-      - name: Run tests
-        run: npm test
+			- name: Run tests
+				run: npm test
+
+	lint:
+		runs-on: ubuntu-latest
+
+		steps:
+			- name: Checkout repository
+				uses: actions/checkout@v4
+
+			- name: Install dependencies
+				run: npm install
+
+			- name: Lint code
+				run: npm run lint
 
