@@ -1,25 +1,25 @@
 'use client';
 
-import { Song } from '@/types/song';
+import { SimplifiedTrack } from '@/types/track';
 import { createContext, useContext, useState, useEffect, ReactNode, useRef, useCallback } from 'react';
 
 type Panel = 'sidebar' | 'tracklist';
 
 type PlaybackContextType = {
 	isPlaying: boolean;
-	currentTrack: Song | null;
+	currentTrack: SimplifiedTrack | null;
 	currentTime: number;
 	duration: number;
 	isLoading: boolean;
 	setIsLoading: (isLoading: boolean) => void;
 	togglePlayPause: () => void;
 	setIsPlaying: (isPlaying: boolean) => void;
-	playTrack: (track: Song) => void;
+	playTrack: (track: SimplifiedTrack) => void;
 	playNextTrack: () => void;
 	playPreviousTrack: () => void;
 	setCurrentTime: (time: number) => void;
 	setDuration: (duration: number) => void;
-	setPlaylist: (songs: Song[]) => void;
+	setPlaylist: (tracks: SimplifiedTrack[]) => void;
 	audioRef: React.RefObject<HTMLAudioElement | null>;
 	activePanel: Panel;
 	setActivePanel: (panel: Panel) => void;
@@ -68,10 +68,10 @@ function useKeyboardNavigation() {
 
 export function PlaybackProvider({ children }: { children: ReactNode }) {
 	const [isPlaying, setIsPlaying] = useState(false);
-	const [currentTrack, setCurrentTrack] = useState<Song | null>(null);
+	const [currentTrack, setCurrentTrack] = useState<SimplifiedTrack | null>(null);
 	const [currentTime, setCurrentTime] = useState(0);
 	const [duration, setDuration] = useState(0);
-	const [playlist, setPlaylist] = useState<Song[]>([]);
+	const [playlist, setPlaylist] = useState<SimplifiedTrack[]>([]);
 	const [isLoading, setIsLoading] = useState(false);
 	const audioRef = useRef<HTMLAudioElement>(null);
 
@@ -89,7 +89,7 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
 	}, [isPlaying]);
 
 	const playTrack = useCallback(
-		(track: Song) => {
+		(track: SimplifiedTrack) => {
 			setCurrentTrack(track);
 			setIsPlaying(true);
 			setCurrentTime(0);
@@ -107,7 +107,7 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
 			}
 			setActivePanel('tracklist');
 		},
-		[setActivePanel]
+		[setActivePanel, currentTrack, playlist]
 	);
 
 	const playNextTrack = useCallback(() => {
@@ -149,6 +149,12 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
 		window.addEventListener('keydown', handleGlobalKeyDown);
 		return () => window.removeEventListener('keydown', handleGlobalKeyDown);
 	}, [togglePlayPause]);
+
+	useEffect(() => {
+		if (currentTime >= duration && currentTrack && currentTime > 0) {
+			playNextTrack();
+		}
+	}, [duration, currentTime, currentTrack]);
 
 	return (
 		<PlaybackContext.Provider
