@@ -97,6 +97,14 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
 				audioRef.current.src = getAudioSrc(`/api/track/${track.id}/song`);
 				audioRef.current.play();
 			}
+			if (playlist.length !== 0) {
+				const index = playlist.findIndex((t) => t.id === track.id);
+				if (index !== -1 && index < playlist.length - 1) {
+					fetch(`/api/track/${playlist[index + 1].id}/download`, {
+						method: 'POST',
+					});
+				}
+			}
 			setActivePanel('tracklist');
 		},
 		[setActivePanel]
