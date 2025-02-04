@@ -1,5 +1,5 @@
 import { LogModel } from '@/models/Log';
-import { api } from './api';
+import { getSpotifyApi } from './api';
 import { getUser } from './auth';
 import { RightSidebarType } from '@/types/sidebar';
 import { UserModel } from '@/models/User';
@@ -11,6 +11,7 @@ export async function getRightSidebarData(): Promise<RightSidebarType | null> {
 			return null;
 		}
 
+		const api = await getSpotifyApi();
 		const newReleases = await api.browse.getNewReleases();
 		const userData = await UserModel.findOne({ email: user.email });
 
@@ -27,7 +28,7 @@ export async function getRightSidebarData(): Promise<RightSidebarType | null> {
 			},
 			{
 				$group: {
-					_id: '$songId',
+					_id: '$trackId',
 					count: { $sum: 1 },
 				},
 			},
@@ -36,19 +37,19 @@ export async function getRightSidebarData(): Promise<RightSidebarType | null> {
 			},
 			{
 				$lookup: {
-					from: 'songs',
+					from: 'tracks',
 					localField: '_id',
 					foreignField: '_id',
-					as: 'song',
+					as: 'track',
 				},
 			},
 			{
-				$unwind: '$song',
+				$unwind: '$track',
 			},
 			{
 				$lookup: {
 					from: 'artists',
-					localField: 'song.artists',
+					localField: 'track.artistsId',
 					foreignField: '_id',
 					as: 'artists',
 				},
@@ -56,7 +57,7 @@ export async function getRightSidebarData(): Promise<RightSidebarType | null> {
 			{
 				$lookup: {
 					from: 'albums',
-					localField: 'song.album',
+					localField: 'track.albumId',
 					foreignField: '_id',
 					as: 'album',
 				},
@@ -67,8 +68,8 @@ export async function getRightSidebarData(): Promise<RightSidebarType | null> {
 			{
 				$project: {
 					_id: 0,
-					id: '$song.id',
-					name: '$song.name',
+					id: '$track.id',
+					name: '$track.name',
 					artists: {
 						$map: {
 							input: '$artists',
@@ -76,11 +77,10 @@ export async function getRightSidebarData(): Promise<RightSidebarType | null> {
 							in: {
 								id: '$$artist.id',
 								name: '$$artist.name',
-								imageUrl: '$$artist.imageUrl',
 							},
 						},
 					},
-					imageUrl: '$song.imageUrl',
+					images: '$track.images',
 					album: {
 						id: '$album.id',
 						name: '$album.name',
@@ -101,22 +101,22 @@ export async function getRightSidebarData(): Promise<RightSidebarType | null> {
 			},
 			{
 				$lookup: {
-					from: 'songs',
-					localField: 'songId',
+					from: 'tracks',
+					localField: 'trackId',
 					foreignField: '_id',
-					as: 'song',
+					as: 'track',
 				},
 			},
 			{
-				$unwind: '$song',
+				$unwind: '$track',
 			},
 			{
-				$unwind: '$song.artists',
+				$unwind: '$track.artistsId',
 			},
 			{
 				$lookup: {
 					from: 'artists',
-					localField: 'song.artists',
+					localField: 'track.artistsId',
 					foreignField: '_id',
 					as: 'artist',
 				},
@@ -156,7 +156,10 @@ export async function getRightSidebarData(): Promise<RightSidebarType | null> {
 			listenMoreOften,
 			favouriteArtists: favouriteArtists.map((artist) => ({
 				...artist,
-				subscribers: artist.subscribers.toLocaleString(),
+				images: [{ url: artist.imageUrl }],
+				followers: {
+					total: artist.subscribers.toLocaleString(),
+				},
 			})),
 		};
 	} catch (error) {
