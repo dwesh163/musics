@@ -6,10 +6,12 @@ import { Button } from './ui/button';
 import { usePlayback } from '@/app/playback-context';
 import { Song } from '@/types/song';
 import { cn } from '@/lib/utils';
+import { SimplifiedTrack } from '@/types/track';
 
-const TrackInfo = ({ currentTrack }: { currentTrack: Song }) => (
+
+const TrackInfo = ({ currentTrack }: { currentTrack: SimplifiedTrack }) => (
 	<div className="flex items-center gap-4 w-96">
-		<Image src={currentTrack?.imageUrl} alt="Now Playing" width={56} height={56} className="rounded" />
+		<Image src={currentTrack?.images[0].url} alt="Now Playing" width={56} height={56} className="rounded" />
 		<div>
 			<h4 className="font-medium">{currentTrack?.name}</h4>
 			<p className="text-sm text-gray-400">
@@ -138,10 +140,11 @@ const PlayerControls = () => {
 					.map((artist) => artist.name)
 					.join(', '),
 				album: currentTrack.album.name || undefined,
-				artwork: [
-					{ src: currentTrack.imageUrl!, sizes: '(max-width: 96px) 96px, (max-width: 128px) 128px, (max-width: 192px) 192px, (max-width: 256px) 256px, (max-width: 384px) 384px, (max-width: 512px) 512px, 640px, 128px', type: 'image/png' },
-					{ src: currentTrack.imageUrl!, sizes: '640x640', type: 'image/png' },
-				],
+				artwork: currentTrack.images.map((image) => ({
+					src: image.url,
+					sizes: image.width + 'x' + image.height,
+					type: 'image/png',
+				})),
 			});
 
 			navigator.mediaSession.setActionHandler('play', () => {
@@ -158,7 +161,6 @@ const PlayerControls = () => {
 			navigator.mediaSession.setActionHandler('nexttrack', playNextTrack);
 
 			navigator.mediaSession.setActionHandler('seekto', (details) => {
-				console.log(details);
 				if (audioRef.current && details.seekTime !== undefined) {
 					audioRef.current.currentTime = details.seekTime;
 					setCurrentTime(details.seekTime);
@@ -223,10 +225,9 @@ const PlayerControls = () => {
 export default function PlayerBar() {
 	const { currentTrack, audioRef, isLoading, setIsLoading, setIsPlaying, playTrack } = usePlayback();
 
-	const checkSong = async (currentTrack: Song) => {
+	const checkSong = async (currentTrack: SimplifiedTrack) => {
 		try {
-			const response = await fetch(`/api/track/${currentTrack?.id}/song`);
-			console.log(response);
+			const response = await fetch(`/api/track/${currentTrack?.id}/song?check=true`);
 			if (!response.ok) {
 				setIsLoading(true);
 				setIsPlaying(false);
