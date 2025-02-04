@@ -1,62 +1,10 @@
 'use client';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Artist, PartialSearchResult, SimplifiedAlbum, Track } from '@spotify/web-api-ts-sdk';
+import { SearchResultItem } from './SearchResultItem';
+import { TrackItem } from './TrackItem';
 
-import { Album, PartialSearchResult, Track } from '@spotify/web-api-ts-sdk';
-import { Play, Plus, MoreHorizontal, Heart } from 'lucide-react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { ScrollArea } from './ui/scroll-area';
-import { Button } from './ui/button';
-import { usePlayback } from '@/app/playback-context';
-import { cn } from '@/lib/utils';
-
-const SearchResultItem = ({ image, title, subtitle, actions = [], linkHref = null }: { image: string; title: string; subtitle: string; actions: any[] | null; linkHref: string | null }) => {
-	const renderContent = () => (
-		<div className="flex items-center gap-2 sm:gap-4 p-2 sm:p-3 hover:bg-gray-800/50 rounded-lg group">
-			<div className="relative flex-shrink-0">
-				<Image src={image || '/placeholder.png'} alt={title} width={48} height={48} className="rounded object-cover w-12 h-12 sm:w-14 sm:h-14" />
-			</div>
-			<div className="flex-1 min-w-0 pr-2">
-				<h3 className="font-bold text-sm sm:text-base truncate max-w-[50vw]">{title}</h3>
-				<p className="text-xs sm:text-sm text-gray-400 truncate max-w-[50vw]">{subtitle}</p>
-			</div>
-			{actions && (
-				<div className="flex items-center space-x-1 sm:space-x-2">
-					{actions.map((action, index) => (
-						<button key={index} className={cn('text-gray-400 hover:text-white', action.highlight ? 'bg-orange-500 hover:bg-orange-400 text-white rounded-full p-2 mx-1' : 'p-0 sm:p-1', 'opacity-0 group-hover:opacity-100 transition-opacity')} onClick={action.onClick}>
-							{action.icon}
-						</button>
-					))}
-					<button className="p-0 sm:p-1 text-gray-400 hover:text-white">
-						<MoreHorizontal size={14} className="sm:size-4" />
-					</button>
-				</div>
-			)}
-		</div>
-	);
-
-	return linkHref ? (
-		<Link href={linkHref} className="block">
-			{renderContent()}
-		</Link>
-	) : (
-		renderContent()
-	);
-};
-
-export function SearchResults({ results }: { results: Required<Pick<PartialSearchResult, 'tracks' | 'artists' | 'albums'>> }) {
-	const { playTrack } = usePlayback();
-
-	const onPlayTrack = (track: Track) => {
-		playTrack({
-			id: track.id,
-			name: track.name,
-			artists: track.artists.map((artist) => ({ id: artist.id, name: artist.name })),
-			imageUrl: track.album.images[0]?.url,
-			album: { id: track.album.id, name: track.album.name },
-			duration: track.duration_ms / 1000,
-		});
-	};
-
+export function SearchResults({ results }: { results: Required<Pick<PartialSearchResult, 'artists' | 'albums' | 'tracks'>> }) {
 	const renderResultSection = (title: string | null, items: any[], renderItem: (item: any) => React.ReactNode) => {
 		if (items.length === 0) return null;
 
@@ -68,48 +16,18 @@ export function SearchResults({ results }: { results: Required<Pick<PartialSearc
 		);
 	};
 
+	const renderTrack = (track: Track) => <TrackItem key={`album-${track.id}`} track={track} />;
+
+	const renderAlbum = (album: SimplifiedAlbum) => <SearchResultItem key={`album-${album.id}`} image={album.images[0]?.url} title={album.name} subtitle={`${album.artists.map((artist) => artist.name).join(', ')} • ${album.release_date}`} linkHref={`/album/${album.id}`} />;
+
+	const renderArtist = (artist: Artist) => <SearchResultItem key={`artist-${artist.id}`} image={artist.images?.[0]?.url} title={artist.name} subtitle={`${artist.followers?.total} followers`} linkHref={`/artist/${artist.id}`} />;
+
 	return (
-		<ScrollArea className="w-full h-[calc(100vh-8rem)] sm:h-[calc(100%-10rem)]">
+		<ScrollArea className="sm:w-full w-[95%] h-[calc(100vh-8rem)] sm:h-[calc(100%-10rem)]">
 			<div className="space-y-4 sm:space-y-6 p-1 sm:p-2">
-				{renderResultSection(null, results.tracks.items, (track: Track) => (
-					<SearchResultItem
-						key={`track-${track.id}`}
-						image={track.album.images[0]?.url}
-						title={track.name}
-						subtitle={`${track.artists.map((artist) => artist.name).join(', ')} • ${track.album.name}`}
-						actions={[
-							{
-								icon: <Play size={14} className="sm:size-4" fill="currentColor" />,
-								onClick: (e: Event) => {
-									e.preventDefault();
-									onPlayTrack(track);
-								},
-								highlight: true,
-							},
-							{
-								icon: <Heart size={14} className="sm:size-4" />,
-								onClick: (e: Event) => {
-									e.preventDefault();
-								},
-							},
-							{
-								icon: <Plus size={14} className="sm:size-4" />,
-								onClick: (e: Event) => {
-									e.preventDefault();
-								},
-							},
-						]}
-						linkHref={null}
-					/>
-				))}
-
-				{renderResultSection('Albums', results.albums.items, (album: Album) => (
-					<SearchResultItem key={`album-${album.id}`} image={album.images[0]?.url} title={album.name} subtitle={`${album.artists.map((artist) => artist.name).join(', ')} • ${album.release_date}`} actions={[]} linkHref={`/album/${album.id}`} />
-				))}
-
-				{renderResultSection('Artists', results.artists.items, (artist) => (
-					<SearchResultItem key={`artist-${artist.id}`} image={artist.images?.[0]?.url} title={artist.name} subtitle={`${artist.followers?.total} followers`} actions={[]} linkHref={`/artist/${artist.id}`} />
-				))}
+				{renderResultSection(null, results.tracks.items, renderTrack)}
+				{renderResultSection('Albums', results.albums.items, renderAlbum)}
+				{renderResultSection('Artists', results.artists.items, renderArtist)}
 			</div>
 		</ScrollArea>
 	);
