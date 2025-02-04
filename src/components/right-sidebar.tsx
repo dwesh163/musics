@@ -4,8 +4,8 @@ import { Heart, MoreVertical, ChevronRight, AlertCircle } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Error } from './error';
-import { NewReleases as NewReleasesType, SimplifiedAlbum } from '@spotify/web-api-ts-sdk';
-import { SimpleArtist, SimpleTrack } from '@/types/sidebar';
+import { Artist, NewReleases as NewReleasesType, SimplifiedAlbum } from '@spotify/web-api-ts-sdk';
+import { SimplifiedTrack } from '@/types/track';
 
 const NewReleases = async ({ newReleases }: { newReleases: NewReleasesType | null }) => {
 	if (!newReleases) {
@@ -49,7 +49,7 @@ const AlbumItem = ({ album }: { album: SimplifiedAlbum }) => (
 	</div>
 );
 
-const ListenMoreOften = ({ listenMoreOften }: { listenMoreOften?: SimpleTrack[] }) => {
+const ListenMoreOften = ({ listenMoreOften }: { listenMoreOften?: SimplifiedTrack[] }) => {
 	if (!listenMoreOften) {
 		return <Error text="Something went wrong" subText="Failed to get tracks" Icon={AlertCircle} color="text-red-500" />;
 	}
@@ -65,30 +65,30 @@ const ListenMoreOften = ({ listenMoreOften }: { listenMoreOften?: SimpleTrack[] 
 			</div>
 			<div className="space-y-4">
 				{listenMoreOften.map((track) => (
-					<TrackItem key={track.id} track={track} />
+					<div key={track.id} className="flex items-center gap-3 group">
+						<Image src={track.images[0].url || '/placeholder.png'} width={40} height={40} alt={track.name} className="w-10 h-10 rounded flex-shrink-0 object-cover" />
+						<div className="min-w-0 flex-1">
+							<h3 className="font-medium truncate">{track.name}</h3>
+							<p className="text-xs text-gray-400 truncate">
+								{track.artists
+									.slice(0, 2)
+									.map((artist) => artist.name)
+									.join(', ')}{' '}
+								• {track.album.name}
+							</p>
+						</div>
+						<div className="flex items-center gap-2">
+							<Heart size={16} className="text-gray-400 opacity-0 group-hover:opacity-100" />
+							<MoreVertical size={16} className="text-gray-400 opacity-0 group-hover:opacity-100" />
+						</div>
+					</div>
 				))}
 			</div>
 		</div>
 	);
 };
 
-const TrackItem = ({ track }: { track: SimpleTrack }) => (
-	<div className="flex items-center gap-3 group">
-		<Image src={track.imageUrl || '/placeholder.png'} width={40} height={40} alt={track.name} className="w-10 h-10 rounded flex-shrink-0 object-cover" />
-		<div className="min-w-0 flex-1">
-			<h3 className="font-medium truncate">{track.name}</h3>
-			<p className="text-xs text-gray-400 truncate">
-				{track.artists.slice(0, 2).map((artist) => artist.name)} • {track.album.name}
-			</p>
-		</div>
-		<div className="flex items-center gap-2">
-			<Heart size={16} className="text-gray-400 opacity-0 group-hover:opacity-100" />
-			<MoreVertical size={16} className="text-gray-400 opacity-0 group-hover:opacity-100" />
-		</div>
-	</div>
-);
-
-const FavouriteArtists = ({ favouriteArtists }: { favouriteArtists?: SimpleArtist[] }) => {
+const FavouriteArtists = ({ favouriteArtists }: { favouriteArtists?: Artist[] }) => {
 	if (!favouriteArtists) {
 		return <Error text="Something went wrong" subText="Failed to get favourite artists" Icon={AlertCircle} color="text-red-500" />;
 	}
@@ -109,13 +109,13 @@ const FavouriteArtists = ({ favouriteArtists }: { favouriteArtists?: SimpleArtis
 	);
 };
 
-const ArtistItem = ({ artist, rank }: { artist: SimpleArtist; rank: number }) => (
+const ArtistItem = ({ artist, rank }: { artist: Artist; rank: number }) => (
 	<div className="flex items-center gap-3">
 		<div className="w-6 text-2xl font-bold text-gray-700">{rank}</div>
-		<Image src={artist.imageUrl || '/placeholder.png'} width={40} height={40} alt={artist.name} className="w-10 h-10 rounded flex-shrink-0 object-cover" />
+		<Image src={artist.images[0].url || '/placeholder.png'} width={40} height={40} alt={artist.name} className="w-10 h-10 rounded flex-shrink-0 object-cover" />
 		<div className="min-w-0 flex-1">
 			<h3 className="font-medium truncate">{artist.name}</h3>
-			<p className="text-xs text-gray-400 truncate">{artist.subscribers} Subscribers</p>
+			<p className="text-xs text-gray-400 truncate">{artist.followers.total} Subscribers</p>
 		</div>
 		<Link href={`/artist/${artist.id}`} className="text-gray-400 hover:text-gray-200">
 			<ChevronRight size={16} />
