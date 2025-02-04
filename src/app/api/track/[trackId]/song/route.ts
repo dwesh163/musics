@@ -1,4 +1,5 @@
 import { checkAccreditation, getUser } from '@/lib/auth';
+import { logTrackListen } from '@/lib/log';
 import { getTrackFile } from '@/lib/track';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -16,10 +17,17 @@ export async function GET(req: NextRequest, context: any) {
 			return NextResponse.json({ message: 'Not authorized.' }, { status: 403 });
 		}
 
+		const url = new URL(req.url);
+		const skipLog = url.searchParams.has('check');
+
 		const songBuffer = await getTrackFile(trackId);
 
 		if (!songBuffer) {
 			return NextResponse.json({ message: 'Track not found.' }, { status: 404 });
+		}
+
+		if (!skipLog) {
+			await logTrackListen(trackId);
 		}
 
 		const response = new NextResponse(songBuffer, {
