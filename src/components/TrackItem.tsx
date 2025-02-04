@@ -44,8 +44,6 @@ export function TrackItem({
 
 	const router = useRouter();
 
-	console.log('Track:', track);
-
 	const trackData =
 		'duration_ms' in track
 			? {
@@ -58,8 +56,6 @@ export function TrackItem({
 			  }
 			: track;
 
-	console.log('Track data:', trackData);
-
 	if (!trackData) return null;
 
 	const handlePlayTrack = () => {
@@ -69,21 +65,19 @@ export function TrackItem({
 	};
 
 	const handleShare = () => {
-		console.log('Share track:', trackData?.name);
+		console.log('Share track:', trackData);
 	};
 
 	const handleGoToAlbum = () => {
 		router.push(`/album/${trackData?.album.id}`);
-		console.log('Go to album:', trackData?.album.name);
 	};
 
 	const handleGoToArtist = () => {
 		router.push(`/artist/${trackData?.artists[0]?.id}`);
-		console.log('Go to artist:', trackData?.artists[0]?.name);
 	};
 
 	const handleBlockTrack = () => {
-		console.log('Block track:', trackData?.name);
+		console.log('Block track:', trackData);
 	};
 
 	return (
