@@ -2,12 +2,14 @@
 
 import { AlbumComponents } from '@/components/album';
 import { Error } from '@/components/error';
-import { api } from '@/lib/api';
+import { getSpotifyApi } from '@/lib/api';
 import { AlertCircle } from 'lucide-react';
 
 export default async function AlbumPage({ params }: { params: Promise<{ id: string }> }) {
 	try {
 		const id = (await params)?.id;
+
+		const api = await getSpotifyApi();
 
 		const data = await api.albums.get(id);
 		const tracks = await api.albums.tracks(id);
