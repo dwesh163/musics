@@ -2,12 +2,14 @@
 
 import { ArtistComponents } from '@/components/artist';
 import { Error } from '@/components/error';
-import { api } from '@/lib/api';
+import { getSpotifyApi } from '@/lib/api';
 import { AlertCircle } from 'lucide-react';
 
 export default async function ArtistwPage({ params }: { params: Promise<{ id: string }> }) {
 	try {
 		const id = (await params)?.id;
+
+		const api = await getSpotifyApi();
 
 		const data = await api.artists.get(id);
 		const topTracks = await api.artists.topTracks(id, 'FR');
