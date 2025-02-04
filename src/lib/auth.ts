@@ -73,7 +73,12 @@ const getProviders = () => [
 
 export const enhanceToken = async ({ token, user }: { token: JWT; user: User }): Promise<JWT> => {
 	try {
-		return token;
+		const access = await checkAccreditation('app:access');
+
+		return {
+			...token,
+			access,
+		};
 	} catch (error) {
 		console.error('Token enhancement error:', error);
 		return token;
@@ -131,7 +136,10 @@ export const getUser = async (): Promise<User | null> => {
 	if (!token) return null;
 
 	await db.connect();
-	const user = await UserModel.findOne<IUser>({ email: session?.user?.email }).populate<{ accreditation: IAccreditation }>('accreditation', '-slug -accessLevel').exec();
+	const user = await UserModel.findOne<IUser>({ email: session?.user?.email }).populate<{ accreditation: IAccreditation }>('accreditation', '-accessLevel').exec();
+	if (!user) return null;
+
+	if (!(await checkAccreditation('app:access'))) return null;
 
 	return {
 		email: session?.user?.email ?? '',
