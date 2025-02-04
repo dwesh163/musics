@@ -127,7 +127,7 @@ export const getUser = async (): Promise<User | null> => {
 
 	const userCookies = await cookies();
 
-	const token = userCookies.get(process.env.NODE_ENV === 'production' ? '__Secure-next-auth.session-token' : 'next-auth.session-token');
+	const token = userCookies.get(process.env.NEXTAUTH_COOKIE_NAME!);
 	if (!token) return null;
 
 	await db.connect();
