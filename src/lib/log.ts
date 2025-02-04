@@ -45,10 +45,3 @@ export async function logTrackDownload(trackId: string) {
 		console.error('Track download failed:', error);
 	}
 }
-
-
-		return;
-	} catch (error) {
-		console.error('Song download failed:', error);
-	}
-}
