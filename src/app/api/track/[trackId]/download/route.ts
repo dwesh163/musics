@@ -1,6 +1,6 @@
 import { checkAccreditation, getUser } from '@/lib/auth';
 import { NextRequest, NextResponse } from 'next/server';
-import { downloadTrack } from '@/lib/spotdl';
+import { downloadTrack } from '@/lib/track';
 
 export async function POST(req: NextRequest, context: any) {
 	try {

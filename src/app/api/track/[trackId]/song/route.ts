@@ -1,5 +1,5 @@
 import { checkAccreditation, getUser } from '@/lib/auth';
-import { getTrackFile } from '@/lib/spotdl';
+import { getTrackFile } from '@/lib/track';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest, context: any) {
