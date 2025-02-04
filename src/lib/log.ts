@@ -1,40 +1,51 @@
 import { LogModel } from '@/models/Log';
 import { getUser } from './auth';
-import { SongModel } from '@/models/Song';
+import { TrackModel } from '@/models/Track';
+import { SimplifiedTrack } from '@/types/track';
+import { UserModel } from '@/models/User';
 
-export async function logSongListen(songId: string) {
+export async function logTrackListen(trackId: string) {
 	try {
 		const user = await getUser();
 		if (!user) return;
 
-		const song = await SongModel.findOne({ id: songId });
-		if (!song) return;
+		const track = await TrackModel.findOne({ id: trackId });
+		if (!track) {
+			console.warn(`Track with id ${trackId} not found.`);
+			return;
+		}
 
 		await LogModel.create({
 			userId: user.id,
 			type: 'listen',
-			songId: song?._id,
+			trackId: track._id,
 		});
-
-		return;
 	} catch (error) {
-		console.error('Song listen failed:', error);
+		console.error('Track listen failed:', error);
 	}
 }
 
-export async function logSongDownload(songId: string) {
+export async function logTrackDownload(trackId: string) {
 	try {
 		const user = await getUser();
 		if (!user) return;
 
-		const song = await SongModel.findOne({ id: songId });
-		if (!song) return;
+		const track = await TrackModel.findOne({ id: trackId });
+		if (!track) {
+			console.warn(`Track with id ${trackId} not found.`);
+			return;
+		}
 
 		await LogModel.create({
 			userId: user.id,
 			type: 'download',
-			songId: song?._id,
+			trackId: track._id,
 		});
+	} catch (error) {
+		console.error('Track download failed:', error);
+	}
+}
+
 
 		return;
 	} catch (error) {
