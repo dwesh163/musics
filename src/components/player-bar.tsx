@@ -4,25 +4,34 @@ import { Play, Pause, SkipBack, SkipForward, Heart, Volume2, VolumeX, Shuffle, R
 import Image from 'next/image';
 import { Button } from './ui/button';
 import { usePlayback } from '@/app/playback-context';
-import { Song } from '@/types/song';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
 import { SimplifiedTrack } from '@/types/track';
 
+const removeParenthesesContent = (text: string) => text.replace(/\([^)]{17,}\)/g, '');
 
 const TrackInfo = ({ currentTrack }: { currentTrack: SimplifiedTrack }) => (
 	<div className="flex items-center gap-4 w-96">
 		<Image src={currentTrack?.images[0].url} alt="Now Playing" width={56} height={56} className="rounded" />
 		<div>
-			<h4 className="font-medium">{currentTrack?.name}</h4>
+			<h4 className="font-medium">{removeParenthesesContent(currentTrack?.name)}</h4>
 			<p className="text-sm text-gray-400">
-				{currentTrack?.artists
-					.slice(0, 2)
-					.map((artist) => artist.name)
-					.join(', ')}
+				{currentTrack?.artists.slice(0, 2).map((artist, index) => (
+					<span key={artist.id}>
+						<Link href={`/artist/${artist.id}`} className="hover:underline">
+							{removeParenthesesContent(artist.name)}
+						</Link>
+						{index < currentTrack.artists.slice(0, 2).length - 1 && ', '}
+					</span>
+				))}{' '}
+				•{' '}
+				<Link href={`/album/${currentTrack.album.id}`} className="hover:underline">
+					{removeParenthesesContent(currentTrack.album.name)}
+				</Link>
 			</p>
 		</div>
 		<button>
-			<Heart className="text-orange-500 hover:bg-orange-500 ml-2" size={20} />
+			<Heart className="text-orange-500 hover:fill-current ml-2" size={20} />
 		</button>
 	</div>
 );
