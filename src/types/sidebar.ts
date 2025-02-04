@@ -1,28 +1,8 @@
-import { NewReleases } from '@spotify/web-api-ts-sdk';
-
-export interface SimpleTrack {
-	name: string;
-	id: string;
-	artists: {
-		name: string;
-		id: string;
-	}[];
-	imageUrl: string;
-	album: {
-		name: string;
-		id: string;
-	};
-}
-
-export interface SimpleArtist {
-	name: string;
-	id: string;
-	subscribers: string;
-	imageUrl: string;
-}
+import { NewReleases, Artist } from '@spotify/web-api-ts-sdk';
+import { SimplifiedTrack } from './track';
 
 export interface RightSidebarType {
-	listenMoreOften: SimpleTrack[];
-	favouriteArtists: SimpleArtist[];
+	listenMoreOften: SimplifiedTrack[];
+	favouriteArtists: Artist[];
 	newReleases: NewReleases;
 }
