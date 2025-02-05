@@ -24,7 +24,7 @@ export function TrackItem({
 	track,
 	index = 0,
 	config = {
-		index: true,
+		index: false,
 		image: true,
 		name: true,
 		artists: true,
