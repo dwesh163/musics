@@ -36,7 +36,7 @@ export function AlbumComponents({ album }: { album: { data: Album; tracks: Page<
 							<Image src={album.data.images[0].url} alt={album.data.name} width={200} height={200} className="w-28 h-28 sm:w-52 sm:h-52 object-cover rounded-lg shadow-lg transition-transform hover:scale-105" />
 							<div className="absolute inset-0 bg-black/20 rounded-lg hover:opacity-0 transition-opacity"></div>
 						</div>
-						<div className="flex flex-col justify-center text-left space-y-2 sm:flex-1">
+						<div className="flex flex-col justify-center text-left sm:flex-1">
 							<h1 className="text-xl sm:text-3xl font-bold text-white line-clamp-2 break-words">{album.data.name}</h1>
 							<div className="text-gray-400 space-y-1">
 								<div className="flex items-center gap-2 flex-wrap">
@@ -53,7 +53,7 @@ export function AlbumComponents({ album }: { album: { data: Album; tracks: Page<
 									{album.data.release_date} • {album.data.total_tracks} tracks • {totalDuration}
 								</p>
 							</div>
-							<div className="hidden sm:flex items-center gap-3">
+							<div className="hidden sm:flex items-center mt-4 gap-3">
 								<button onClick={onPlayAlbum} className="bg-orange-500 text-white rounded-full px-4 sm:px-6 py-2 hover:bg-orange-400 transition-colors flex items-center gap-2 group">
 									<Play size={16} fill="currentColor" className="group-hover:animate-pulse" />
 									Play
