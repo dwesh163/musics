@@ -98,7 +98,7 @@ export function AlbumComponents({ album }: { album: { data: Album; tracks: Page<
 						<span>Title</span>
 						<span>Duration</span>
 					</div>
-					<ScrollArea className="w-full h-full">
+					<ScrollArea className="w-full h-[calc(100%-2rem)]">
 						{tracksData.map((track, index) => (
 							<TrackItem key={track.id} track={track} index={index} config={{ index: true, name: true, duration: true, actions: true }} />
 						))}
