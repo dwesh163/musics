@@ -14,16 +14,16 @@ export function ArtistComponents({ artist }: { artist: { data: Artist; topTracks
 				<Image src={artist.data.images[0].url} alt={artist.data.name} fill className="object-cover brightness-50" />
 				<div className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black to-transparent">
 					<div className="max-w-6xl mx-auto">
-						<h1 className="text-6xl font-bold mb-4">{artist.data.name}</h1>
+						<h1 className="text-6xl font-bold sm:mb-3">{artist.data.name}</h1>
 						<p className="text-gray-300 text-lg">{artist.data.followers?.total?.toLocaleString()} Followers</p>
 					</div>
 				</div>
 			</div>
 
-			<div className="px-6 py-6 h-[calc(100%-200px)]">
+			<div className="sm:p-6 sm:pb-6 p-3 sm:h-[calc(100%-200px)] pb-24">
 				<ScrollArea className="w-full h-full">
 					<section className="mb-12">
-						<h2 className="text-2xl font-bold mb-6">Popular</h2>
+						<h2 className="text-2xl font-bold sm:mb-6 mb-2">Popular</h2>
 						<div className="space-y-2">
 							{artist.topTracks.tracks.map((track, index) => (
 								<TrackItem key={track.id} track={track} />
