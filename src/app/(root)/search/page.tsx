@@ -10,14 +10,24 @@ export default async function SearchPage({ params, searchParams }: { params: any
 		const search = (await searchParams)?.s;
 
 		if (!search || typeof search !== 'string') {
-			return <Error text="What are you looking for?" subText="Enter an artist, track or an album to start searching" Icon={SearchIcon} color="text-gray-400" />;
+			return (
+				<div className="w-full h-full sm:px-6 px-3">
+					<Header />
+					<Error text="What are you looking for?" subText="Enter an artist, track or an album to start searching" Icon={SearchIcon} color="text-gray-400" />;
+				</div>
+			);
 		}
 
 		const api = await getSpotifyApi();
 		const results = await api.search(search, ['track', 'artist', 'album']);
 
 		if (!results || (results.tracks.items.length === 0 && results.artists.items.length === 0 && results.albums.items.length === 0)) {
-			return <Error text="No results found" subText="Try a different search term or check your spelling" Icon={AlertCircle} color="text-yellow-500" />;
+			return (
+				<div className="w-full h-full sm:px-6 px-3">
+					<Header />
+					<Error text="No results found" subText="Try a different search term or check your spelling" Icon={AlertCircle} color="text-yellow-500" />;
+				</div>
+			);
 		}
 
 		return (
