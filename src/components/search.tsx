@@ -23,8 +23,8 @@ export function SearchResults({ results }: { results: Required<Pick<PartialSearc
 	const renderArtist = (artist: Artist) => <SearchResultItem key={`artist-${artist.id}`} image={artist.images?.[0]?.url} title={artist.name} subtitle={`${artist.followers?.total} followers`} linkHref={`/artist/${artist.id}`} />;
 
 	return (
-		<ScrollArea className="sm:w-full w-[95%] h-[calc(100vh-8rem)] sm:h-[calc(100%-10rem)]">
-			<div className="space-y-4 sm:space-y-6 p-1 sm:p-2">
+		<ScrollArea className="w-full h-[calc(100vh-8rem)] sm:h-[calc(100%-10rem)]">
+			<div className="space-y-4 sm:space-y-6 p-1 sm:p-2 w-full">
 				{renderResultSection(null, results.tracks.items, renderTrack)}
 				{renderResultSection('Albums', results.albums.items, renderAlbum)}
 				{renderResultSection('Artists', results.artists.items, renderArtist)}
