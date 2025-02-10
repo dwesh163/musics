@@ -4,7 +4,7 @@ export const dynamic = 'auto';
 import '@/global.css';
 import { SessionProvider } from '@/components/session-provider';
 import React from 'react';
-import { Head } from 'next/document';
+import Head from 'next/head';
 
 const inter = Inter({ subsets: ['latin'] });
 
