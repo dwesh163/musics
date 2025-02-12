@@ -7,34 +7,38 @@ import { usePlayback } from '@/app/playback-context';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { SimplifiedTrack } from '@/types/track';
+import { usePlaylist } from '@/app/playlists-context';
 
 const removeParenthesesContent = (text: string) => text.replace(/\([^)]{17,}\)/g, '');
 
-const TrackInfo = ({ currentTrack }: { currentTrack: SimplifiedTrack }) => (
-	<div className="flex items-center gap-4 w-96">
-		<Image src={currentTrack?.images[0].url} alt="Now Playing" width={56} height={56} className="rounded" />
-		<div>
-			<h4 className="font-medium">{removeParenthesesContent(currentTrack?.name)}</h4>
-			<p className="text-sm text-gray-400">
-				{currentTrack?.artists.slice(0, 2).map((artist, index) => (
-					<span key={artist.id}>
-						<Link href={`/artist/${artist.id}`} className="hover:underline">
-							{removeParenthesesContent(artist.name)}
-						</Link>
-						{index < currentTrack.artists.slice(0, 2).length - 1 && ', '}
-					</span>
-				))}{' '}
-				•{' '}
-				<Link href={`/album/${currentTrack.album.id}`} className="hover:underline">
-					{removeParenthesesContent(currentTrack.album.name)}
-				</Link>
-			</p>
+const TrackInfo = ({ currentTrack }: { currentTrack: SimplifiedTrack }) => {
+	const { favourites, addToFavourites, removeFromFavourites } = usePlaylist();
+	return (
+		<div className="flex items-center gap-4 w-96">
+			<Image src={currentTrack?.images[0].url} alt="Now Playing" width={56} height={56} className="rounded" />
+			<div>
+				<h4 className="font-medium">{removeParenthesesContent(currentTrack?.name)}</h4>
+				<p className="text-sm text-gray-400">
+					{currentTrack?.artists.slice(0, 2).map((artist, index) => (
+						<span key={artist.id}>
+							<Link href={`/artist/${artist.id}`} className="hover:underline">
+								{removeParenthesesContent(artist.name)}
+							</Link>
+							{index < currentTrack.artists.slice(0, 2).length - 1 && ', '}
+						</span>
+					))}{' '}
+					•{' '}
+					<Link href={`/album/${currentTrack.album.id}`} className="hover:underline">
+						{removeParenthesesContent(currentTrack.album.name)}
+					</Link>
+				</p>
+			</div>
+			<button onClick={() => (favourites.includes(currentTrack.id) ? removeFromFavourites(currentTrack.id) : addToFavourites(currentTrack.id))}>
+				<Heart className={cn('ml-2 text-orange-500', favourites.includes(currentTrack.id) ? 'fill-current' : 'hover:fill-current')} size={20} />
+			</button>
 		</div>
-		<button>
-			<Heart className="text-orange-500 hover:fill-current ml-2" size={20} />
-		</button>
-	</div>
-);
+	);
+};
 
 function ProgressBar() {
 	let { currentTime, duration, audioRef, setCurrentTime } = usePlayback();
