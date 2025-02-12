@@ -1,12 +1,12 @@
-import mongoose, { Document } from 'mongoose';
+import mongoose, { Document, ObjectId } from 'mongoose';
 
 export interface ITrack extends Document {
 	_id: string;
 	id: string;
 	path: string;
 	name: string;
-	artistsId: mongoose.Types.ObjectId[];
-	albumId: mongoose.Types.ObjectId;
+	artistsId: ObjectId[];
+	albumId: ObjectId;
 	images: {
 		url: string;
 		width: number;
