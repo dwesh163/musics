@@ -1,7 +1,13 @@
 import { checkAccreditation, getUser } from '@/lib/auth';
 import { logTrackListen } from '@/lib/log';
+import rateLimit from '@/lib/rate-limit';
 import { getTrackFile } from '@/lib/track';
 import { NextRequest, NextResponse } from 'next/server';
+
+const limiter = rateLimit({
+	interval: 60 * 1000,
+	uniqueTokenPerInterval: 500,
+});
 
 export async function GET(req: NextRequest, context: any) {
 	try {
@@ -17,9 +23,13 @@ export async function GET(req: NextRequest, context: any) {
 			return NextResponse.json({ message: 'Not authorized.' }, { status: 403 });
 		}
 
+		const { isRateLimited } = limiter.check(10, `song_${user.email}`);
+		if (isRateLimited) {
+			return NextResponse.json({ message: 'Too many requests. Please try again later.' }, { status: 429 });
+		}
+
 		const url = new URL(req.url);
 		const skipLog = url.searchParams.has('check');
-
 		const songBuffer = await getTrackFile(trackId);
 
 		if (!songBuffer) {
