@@ -27,61 +27,97 @@ async function fetchDownloadUrl(trackId: string, clientId: string): Promise<stri
 	return await response.json();
 }
 
-async function saveTrackMetadata(trackId: string, downloadPath: string): Promise<void> {
-	const api = await getSpotifyApi();
-	const track: Track = await api.tracks.get(trackId);
-
-	const artistList = await Promise.all(
-		track.artists.map(async (artist) => {
-			return await api.artists.get(artist.id);
-		})
-	);
-
-	const artistObjectIds = await Promise.all(
-		artistList.map(async (artist) => {
-			const artistDoc = await ArtistModel.findOneAndUpdate(
-				{ id: artist.id },
-				{
-					$setOnInsert: {
-						id: artist.id,
-						name: artist.name,
-						imageUrl: artist.images[0]?.url,
-						subscribers: artist.followers.total,
-					},
+async function saveTrackPath(trackId: string, downloadPath: string): Promise<ErrorType> {
+	try {
+		await TrackModel.findOneAndUpdate(
+			{ id: trackId },
+			{
+				$set: {
+					path: downloadPath,
 				},
-				{ upsert: true, new: true }
-			);
-			return artistDoc._id;
-		})
-	);
+			}
+		);
+		return { message: 'Track path saved successfully', status: 200 };
+	} catch (error) {
+		console.error('Failed to save track path:', error);
+		return {
+			message: 'Internal server error',
+			status: 500,
+		};
+	}
+}
 
-	const albumDoc = await AlbumModel.findOneAndUpdate(
-		{ id: track.album.id },
-		{
-			$setOnInsert: {
-				id: track.album.id,
-				name: track.album.name,
-				imageUrl: track.album.images[0]?.url,
-			},
-		},
-		{ upsert: true, new: true }
-	);
+export async function saveTrackMetadata(trackId: string, downloadPath?: string): Promise<ErrorType> {
+	try {
+		const api = await getSpotifyApi();
+		const track: Track = await api.tracks.get(trackId);
+		if (!track) return { message: 'Track not found', status: 404 };
 
-	await TrackModel.findOneAndUpdate(
-		{ id: trackId },
-		{
-			$setOnInsert: {
-				id: trackId,
-				name: track.name,
-				artistsId: artistObjectIds,
-				albumId: albumDoc._id,
-				images: track.album.images,
-				duration: track.duration_ms / 1000,
-				path: downloadPath,
+		const artistList = await Promise.all(
+			track.artists.map(async (artist) => {
+				return await api.artists.get(artist.id);
+			})
+		);
+
+		const artistObjectIds = await Promise.all(
+			artistList.map(async (artist) => {
+				const artistDoc = await ArtistModel.findOneAndUpdate(
+					{ id: artist.id },
+					{
+						$setOnInsert: {
+							id: artist.id,
+							name: artist.name,
+							imageUrl: artist.images[0]?.url,
+							subscribers: artist.followers.total,
+						},
+					},
+					{ upsert: true, new: true }
+				);
+				return artistDoc._id;
+			})
+		);
+
+		const albumDoc = await AlbumModel.findOneAndUpdate(
+			{ id: track.album.id },
+			{
+				$setOnInsert: {
+					id: track.album.id,
+					name: track.album.name,
+					imageUrl: track.album.images[0]?.url,
+				},
 			},
-		},
-		{ upsert: true }
-	);
+			{ upsert: true, new: true }
+		);
+
+		await TrackModel.findOneAndUpdate(
+			{ id: trackId },
+			{
+				$setOnInsert: {
+					id: trackId,
+					name: track.name,
+					artistsId: artistObjectIds,
+					albumId: albumDoc._id,
+					images: track.album.images,
+					duration: track.duration_ms / 1000,
+					path: downloadPath,
+				},
+			},
+			{ upsert: true }
+		);
+
+		if (downloadPath) {
+			const save = await saveTrackPath(trackId, downloadPath);
+			if (save.status !== 200) return save;
+		}
+
+		return { message: 'Track metadata saved successfully', status: 200 };
+	} catch (error) {
+		console.error('Failed to save track metadata:', error);
+		return {
+			message: 'Internal server error',
+			status: 500,
+		};
+	}
 }
 
 export async function downloadTrack(trackId: string): Promise<ErrorType> {
@@ -89,7 +125,9 @@ export async function downloadTrack(trackId: string): Promise<ErrorType> {
 		const clientId = await getClientId();
 		const downloadPath = await fetchDownloadUrl(trackId, clientId);
 
-		await saveTrackMetadata(trackId, downloadPath);
+		const save = await saveTrackMetadata(trackId, downloadPath);
+		if (save.status !== 200) return save;
+
 		await logTrackDownload(trackId);
 
 		return { message: 'Track downloaded successfully', status: 200 };
