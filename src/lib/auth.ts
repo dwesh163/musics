@@ -11,6 +11,8 @@ import { cookies } from 'next/headers';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import bcryt from 'bcrypt';
 import rateLimit from './rate-limit';
+import { createPlaylist } from './playlist';
+import { PlaylistModel } from '@/models/Playlist';
 
 const limiter = rateLimit({
 	interval: 60 * 1000,
@@ -44,7 +46,7 @@ const getProviders = () => [
 
 				await db.connect();
 
-				const user = await UserModel.findOne<IUser>({ email: credentials.email }, 'email password verified username name _id').lean();
+				const user = await UserModel.findOne<IUser>({ email: credentials.email }, 'email password verified username name _id favouritePlaylist').lean();
 
 				if (!user || !user.verified) {
 					await new Promise((r) => setTimeout(r, 1000));
@@ -62,6 +64,7 @@ const getProviders = () => [
 					email: user.email,
 					username: user.username,
 					name: user.name,
+					favouritePlaylist: user.favouritePlaylist,
 				};
 			} catch (error) {
 				console.error('Auth error:', error);
@@ -92,32 +95,26 @@ export const handleSignIn = async ({ user, account, profile }: { user: User; acc
 		if (!email) return false;
 
 		const provider = account?.provider ?? 'credentials';
-
 		const defaultAccreditation = await AccreditationModel.findOne<IAccreditation>({ slug: 'den', accessLevel: 0 }).exec();
-
 		if (!defaultAccreditation) return false;
 
 		const existingUser = await UserModel.findOne({ email }).exec();
+		const userData = {
+			username: profile?.name ?? profile?.login ?? existingUser?.username ?? null,
+			image: user.image ?? profile?.image ?? existingUser?.image ?? null,
+			name: profile?.name ?? user.name ?? profile?.login ?? existingUser?.name ?? null,
+			provider,
+			verified: ['google', 'github'].includes(provider),
+			accreditation: existingUser?.accreditation ?? defaultAccreditation._id,
+		};
 
-		if (existingUser) {
-			const updates = {
-				username: profile?.name ?? profile?.login ?? existingUser.username,
-				image: user.image ?? profile?.image ?? existingUser.image,
-				name: profile?.name ?? user.name ?? profile?.login ?? existingUser.name,
-			};
+		const finalUser = existingUser ? await UserModel.findOneAndUpdate({ email }, userData, { new: true }) : await UserModel.create({ ...userData, email, id: uuid().replace(/-/g, '') });
 
-			await UserModel.updateOne({ _id: existingUser._id }, updates);
-		} else {
-			await UserModel.create({
-				email,
-				id: uuid().replace(/-/g, ''),
-				username: profile?.name ?? profile?.login ?? null,
-				image: user.image ?? profile?.image ?? null,
-				provider,
-				name: profile?.name ?? user.name ?? profile?.login ?? null,
-				verified: ['google', 'github'].includes(provider),
-				accreditation: defaultAccreditation._id,
-			});
+		if (!existingUser) {
+			const favourite = await createPlaylist('Favourite', finalUser._id.toString());
+			const favouritePlaylist = await PlaylistModel.findOne({ id: favourite?.data?.id });
+			if (favourite.status !== 200) throw new Error('Failed to create favourite playlist');
+			await UserModel.updateOne({ _id: finalUser._id }, { favouritePlaylist: favouritePlaylist?._id });
 		}
 
 		return true;
@@ -126,7 +123,6 @@ export const handleSignIn = async ({ user, account, profile }: { user: User; acc
 		return false;
 	}
 };
-
 export const getUser = async (): Promise<User | null> => {
 	const session = await getServerSession();
 
@@ -147,6 +143,7 @@ export const getUser = async (): Promise<User | null> => {
 		id: user?._id.toString() ?? '',
 		username: user?.username ?? '',
 		image: user?.image ?? '',
+		favouritePlaylist: user?.favouritePlaylist.toString() ?? '',
 	};
 };
 
