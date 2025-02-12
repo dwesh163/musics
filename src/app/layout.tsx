@@ -4,7 +4,6 @@ export const dynamic = 'auto';
 import '@/global.css';
 import { SessionProvider } from '@/components/session-provider';
 import React from 'react';
-import Head from 'next/head';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -21,9 +20,6 @@ export default function RootLayout(props: RootLayoutProps) {
 	const { children, session } = props;
 	return (
 		<html lang="en" suppressHydrationWarning>
-			<Head>
-				<script defer data-domain="kooked.app" src="https://plausible.io/js/script.js"></script>
-			</Head>
 			<body className={inter.className}>
 				<SessionProvider session={session}>{children}</SessionProvider>
 			</body>
