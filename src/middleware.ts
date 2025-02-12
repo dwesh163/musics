@@ -4,7 +4,8 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function middleware(req: NextRequest) {
 	try {
 		const forwardedFor = req.headers.get('x-forwarded-for');
-		const clientIp = forwardedFor?.split(',')[0].trim() || '127.0.0.1';
+		const clientIp = forwardedFor || '127.0.0.1';
+		const url = new URL(req.url);
 
 		const sanitizeRedirectUrl = (path: string): string => {
 			if (!path.startsWith('/')) return '/';
@@ -16,7 +17,7 @@ export async function middleware(req: NextRequest) {
 		};
 
 		const createResponseWithHeaders = (response: NextResponse) => {
-			response.headers.set('x-forwarded-for', clientIp || '127.0.0.1');
+			response.headers.set('x-forwarded-for', clientIp);
 			return response;
 		};
 
@@ -26,9 +27,7 @@ export async function middleware(req: NextRequest) {
 			cookieName: process.env.NEXTAUTH_COOKIE_NAME,
 		});
 
-		const url = new URL(req.url);
-
-		if (['/login', '/register'].includes(url.pathname)) {
+		if (['/login', '/register'].some((path) => url.pathname.startsWith(path))) {
 			return createResponseWithHeaders(NextResponse.next());
 		}
 
