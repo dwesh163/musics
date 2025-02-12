@@ -125,7 +125,7 @@ export function TrackItem({ track, index = 0, config = DEFAULT_CONFIG }: TrackIt
 									<ListMusic className="mr-2 size-4" />
 									Go to artist
 								</DropdownMenuItem>
-								<DropdownMenuSeparator />
+								{playlistId && <DropdownMenuSeparator />}
 								{playlistId && (
 									<DropdownMenuItem onSelect={() => removeFromPlaylist(playlistId, trackData.id)} className="text-red-500 hover:bg-red-500 hover:bg-opacity-10 focus:bg-red-500 focus:bg-opacity-10 focus:text-red-500 cursor-pointer">
 										<Trash2 className="mr-2 size-4" />
