@@ -22,7 +22,7 @@ export async function POST(req: NextRequest, context: any) {
 			return NextResponse.json({ message: 'Not authorized.' }, { status: 403 });
 		}
 
-		const { isRateLimited } = limiter.check(10, `song_${user.email}`);
+		const { isRateLimited } = limiter.check(30, `song_${user.email}`);
 		if (isRateLimited) {
 			return NextResponse.json({ message: 'Too many requests. Please try again later.' }, { status: 429 });
 		}
