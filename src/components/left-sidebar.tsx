@@ -1,9 +1,13 @@
 'use client';
 import { User } from 'next-auth';
-import { ListMusic, Heart, Clock, History, Plus, Search, Home } from 'lucide-react';
+import { ListMusic, Heart, Clock, History, Search, Home, AlertCircle } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { PlaylistsType } from '@/types/playlist';
+import { Error } from './error';
+import { cn } from '@/lib/utils';
+import { CreatePlaylistDialog } from './dialog/CreatePlaylistDialog';
 
 const menuItems = [
 	{ id: 'feed', icon: Home, label: 'Feed', href: '/' },
@@ -17,16 +21,10 @@ const yourMusicItems = [
 	{ id: 'history', icon: History, label: 'History', href: '/history' },
 ];
 
-const playlists = [
-	{ id: 'metalcore', label: 'Metalcore', color: 'bg-red-500', href: '/playlist/metalcore' },
-	{ id: 'electro', label: 'Electro', color: 'bg-green-500', href: '/playlist/electro' },
-	{ id: 'funk', label: 'Funk', color: 'bg-yellow-500', href: '/playlist/funk' },
-	{ id: 'disco', label: 'Disco', color: 'bg-purple-500', href: '/playlist/disco' },
-];
+const colors = ['bg-red-500', 'bg-green-500', 'bg-yellow-500', 'bg-purple-500', 'bg-blue-500', 'bg-indigo-500', 'bg-pink-500', 'bg-cyan-500', 'bg-rose-500', 'bg-amber-500'];
 
-export default function Sidebar({ user }: { user: User }) {
+export default function Sidebar({ user, playlists }: { user: User; playlists: PlaylistsType[] | null }) {
 	const pathname = usePathname();
-	const router = useRouter();
 
 	const isSearchRelatedRoute = (path: string) => {
 		return ['/search', '/artist', '/album'].some((route) => path.startsWith(route));
@@ -34,7 +32,6 @@ export default function Sidebar({ user }: { user: User }) {
 
 	const MenuItem = ({
 		item,
-		isPlaylist = false,
 	}: {
 		item: {
 			id: string;
@@ -43,16 +40,24 @@ export default function Sidebar({ user }: { user: User }) {
 			href: string;
 			color?: string;
 		};
-		isPlaylist?: boolean;
 	}) => {
 		const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href)) || (item.href === '/search' && isSearchRelatedRoute(pathname));
 
 		const Icon = item.icon;
 
 		return (
-			<Link href={item.href} className={`flex items-center gap-3 cursor-pointer transition-colors ${isActive ? 'text-orange-500' : 'text-gray-400 hover:text-gray-300'}`}>
-				{isPlaylist ? <span className={`w-2 h-2 ${item.color} rounded-full`}></span> : Icon && <Icon size={20} />}
+			<Link href={item.href} className={cn('flex items-center gap-3 cursor-pointer transition-colors', isActive ? 'text-orange-500' : 'text-gray-400 hover:text-gray-300')}>
+				{Icon && <Icon size={20} />}
 				{item.label}
+			</Link>
+		);
+	};
+
+	const PlaylistItem = ({ playlist, index }: { playlist: PlaylistsType; index: number }) => {
+		return (
+			<Link href={`/playlist/${playlist.id}`} className="flex items-center gap-3 cursor-pointer transition-colors text-gray-400 hover:text-gray-300">
+				<span className={cn('w-2 h-2 rounded-full', colors[index])}></span>
+				{playlist.name}
 			</Link>
 		);
 	};
@@ -101,19 +106,19 @@ export default function Sidebar({ user }: { user: User }) {
 
 				<div>
 					<h2 className="text-xs uppercase text-gray-400 font-medium mb-4">Your Playlists</h2>
-					<ul className="space-y-3">
-						{playlists.map((playlist) => (
-							<li key={playlist.id}>
-								<MenuItem item={playlist} isPlaylist={true} />
-							</li>
-						))}
-					</ul>
+					{!playlists ? (
+						<Error text="Something went wrong" subText="Failed to get playlists" Icon={AlertCircle} color="text-red-500" />
+					) : (
+						<ul className="space-y-3">
+							{playlists.map((playlist, index) => (
+								<li key={playlist.id}>
+									<PlaylistItem playlist={playlist} index={index} />
+								</li>
+							))}
+						</ul>
+					)}
+					<CreatePlaylistDialog />
 				</div>
-
-				<button onClick={() => router.push('/create-playlist')} className="flex items-center gap-2 text-orange-500 hover:text-orange-400 transition-colors">
-					<Plus size={20} />
-					Create new playlist
-				</button>
 			</nav>
 		</aside>
 	);
