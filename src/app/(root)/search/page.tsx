@@ -13,7 +13,7 @@ export default async function SearchPage({ params, searchParams }: { params: any
 			return (
 				<div className="w-full h-full sm:px-6 px-3">
 					<Header />
-					<Error text="What are you looking for?" subText="Enter an artist, track or an album to start searching" Icon={SearchIcon} color="text-gray-400" />;
+					<Error text="What are you looking for?" subText="Enter an artist, track or an album to start searching" Icon={SearchIcon} color="text-gray-400" />
 				</div>
 			);
 		}
@@ -25,7 +25,7 @@ export default async function SearchPage({ params, searchParams }: { params: any
 			return (
 				<div className="w-full h-full sm:px-6 px-3">
 					<Header />
-					<Error text="No results found" subText="Try a different search term or check your spelling" Icon={AlertCircle} color="text-yellow-500" />;
+					<Error text="No results found" subText="Try a different search term or check your spelling" Icon={AlertCircle} color="text-yellow-500" />
 				</div>
 			);
 		}
