@@ -3,7 +3,7 @@ import { addTrackToPlaylist, removeTrackFromPlaylist } from '@/lib/playlist';
 import { IPlaylist, PlaylistModel } from '@/models/Playlist';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function POST(req: NextRequest, context: any) {
+export async function POST(req: NextRequest) {
 	try {
 		const { trackId } = await req.json();
 
@@ -30,7 +30,7 @@ export async function POST(req: NextRequest, context: any) {
 	}
 }
 
-export async function DELETE(req: NextRequest, context: any) {
+export async function DELETE(req: NextRequest) {
 	try {
 		const { trackId } = await req.json();
 
