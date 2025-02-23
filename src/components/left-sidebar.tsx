@@ -17,7 +17,6 @@ const menuItems = [
 
 const yourMusicItems = [
 	{ id: 'favourites', icon: Heart, label: 'Favourites', href: '/favourites' },
-	{ id: 'later', icon: Clock, label: 'Listen Later', href: '/listen-later' },
 	{ id: 'history', icon: History, label: 'History', href: '/history' },
 ];
 
@@ -46,7 +45,7 @@ export default function Sidebar({ user, playlists }: { user: User; playlists: Pl
 		const Icon = item.icon;
 
 		return (
-			<Link href={item.href} className={cn('flex items-center gap-3 cursor-pointer transition-colors', isActive ? 'text-orange-500' : 'text-gray-400 hover:text-gray-300')}>
+			<Link href={item.href} className={cn('flex items-center gap-3 cursor-pointer transition-colors', isActive ? 'text-primary' : 'text-gray-400 hover:text-gray-300')}>
 				{Icon && <Icon size={20} />}
 				{item.label}
 			</Link>
