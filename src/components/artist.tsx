@@ -11,7 +11,7 @@ export function ArtistComponents({ artist }: { artist: { data: Artist; topTracks
 	return (
 		<div className="w-full h-full">
 			<div className="relative h-[200px]">
-				<Image src={artist.data.images[0].url} alt={artist.data.name} fill className="object-cover brightness-50" />
+				<Image src={artist?.data?.images[0]?.url} alt={artist.data.name} fill className="object-cover brightness-50" />
 				<div className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black to-transparent">
 					<div className="max-w-6xl mx-auto">
 						<h1 className="text-6xl font-bold sm:mb-3">{artist.data.name}</h1>
