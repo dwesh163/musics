@@ -12,6 +12,7 @@ export const metadata: Metadata = {
 	description: 'A simple musics app',
 	keywords: ['musics', 'songs', 'albums', 'artists'],
 	applicationName: 'Kooked Musics',
+	manifest: '/manifest.json',
 };
 
 type RootLayoutProps = any;
