@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 export const dynamic = 'auto';
-import '@/global.css';
+import '@/app/globals.css';
 import { SessionProvider } from '@/components/session-provider';
 import React from 'react';
 
