@@ -77,10 +77,6 @@ const ListenMoreOften = ({ listenMoreOften }: { listenMoreOften?: SimplifiedTrac
 								• {track.album.name}
 							</p>
 						</div>
-						<div className="flex items-center gap-2">
-							<Heart size={16} className="text-gray-400 opacity-0 group-hover:opacity-100" />
-							<MoreVertical size={16} className="text-gray-400 opacity-0 group-hover:opacity-100" />
-						</div>
 					</div>
 				))}
 			</div>
