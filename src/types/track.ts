@@ -15,4 +15,5 @@ export interface SimplifiedTrack {
 		name: string;
 	};
 	duration: number;
+	addedAt?: Date;
 }
