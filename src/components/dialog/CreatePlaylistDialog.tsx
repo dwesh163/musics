@@ -3,7 +3,6 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { Input } from '../ui/input';
-import { revalidatePath } from 'next/cache';
 import { useRouter } from 'next/navigation';
 
 export const CreatePlaylistDialog = () => {
@@ -44,7 +43,6 @@ export const CreatePlaylistDialog = () => {
 			}
 
 			const playlist = await response.json();
-			console.log('Playlist created:', playlist);
 			setPlaylistName('');
 			setError('');
 			router.refresh();
@@ -58,7 +56,7 @@ export const CreatePlaylistDialog = () => {
 	return (
 		<Dialog open={isOpen} onOpenChange={setIsOpen}>
 			<DialogTrigger asChild>
-				<Button className="w-full mt-4 justify-center hover:no-underline font-normal transition-colors">
+				<Button className="w-full mt-4 gap-1 justify-center hover:no-underline font-semibold transition-colors">
 					<Plus size={20} />
 					Create new playlist
 				</Button>
@@ -78,9 +76,7 @@ export const CreatePlaylistDialog = () => {
 						}}
 					/>
 					{error && <p className="text-red-500 text-sm">{error}</p>}
-					<Button className="bg-orange-500 hover:bg-orange-400" onClick={handleCreate}>
-						Create
-					</Button>
+					<Button onClick={handleCreate}>Create</Button>
 				</div>
 			</DialogContent>
 		</Dialog>
