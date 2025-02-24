@@ -48,7 +48,7 @@ export const AddToPlaylistDialog = ({ trackId }: { trackId: string }) => {
 												'grid-cols-2 grid-rows-2': images.length === 3,
 											})}>
 											{images.slice(0, 4).map((image, index) => (
-												<Image
+												<img
 													key={index}
 													src={image}
 													alt={name}
