@@ -1,7 +1,7 @@
 'use client';
 import { ScrollArea } from './ui/scroll-area';
 import { SimplifiedTrack } from '@/types/track';
-import { TrackItem } from './TrackItem';
+import { TrackItem } from './track-item';
 
 export function History({ history }: { history: SimplifiedTrack[] }) {
 	return (
