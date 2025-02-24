@@ -7,6 +7,7 @@ export type PlaylistsType = {
 	length: number;
 	duration: number;
 	images: string[];
+	custom?: boolean;
 };
 
 export type PlaylistType = {

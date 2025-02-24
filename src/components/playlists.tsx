@@ -11,8 +11,8 @@ export function PlaylistsComponent({ playlists }: { playlists: PlaylistsType[] }
 		<ScrollArea className="w-full mt-4 sm:mt-0 sm:h-full h-[calc(100svh-10rem)]">
 			<div className="p-2 px-2">
 				<div className="flex flex-col gap-3 md:hidden">
-					{playlists.map(({ id, name, images, duration, length }) => (
-						<Link key={id} href={`/playlist/${id}`} className="flex">
+					{playlists.map(({ id, name, images, duration, length, custom }) => (
+						<Link key={id} href={`/${!custom ? 'playlist/' : ''}${id}`} className="flex">
 							<div className="flex flex-1 gap-3">
 								<div className="relative w-20 h-20 flex-shrink-0">
 									{images.length > 0 ? (
