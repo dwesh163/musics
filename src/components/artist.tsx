@@ -5,7 +5,7 @@ import { Play } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ScrollArea } from './ui/scroll-area';
-import { TrackItem } from './TrackItem';
+import { TrackItem } from './track-item';
 
 export function ArtistComponents({ artist }: { artist: { data: Artist; topTracks: TopTracksResult; albums: Page<SimplifiedAlbum> } }) {
 	return (
