@@ -34,7 +34,7 @@ export const AddToPlaylistDialog = ({ trackId }: { trackId: string }) => {
 							<Button
 								key={id}
 								variant="ghost"
-								className="w-full h-15 px-2.5 justify-start text-left mb-1"
+								className="w-full h-15 px-2.5 justify-start text-left mb-1 hover:bg-card/90"
 								onClick={() => {
 									addToPlaylist(id, trackId);
 									setIsOpen(false);

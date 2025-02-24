@@ -1,3 +1,4 @@
+'use client';
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -56,9 +57,9 @@ export const CreatePlaylistDialog = () => {
 	return (
 		<Dialog open={isOpen} onOpenChange={setIsOpen}>
 			<DialogTrigger asChild>
-				<Button className="w-full mt-4 gap-1 justify-center hover:no-underline font-semibold transition-colors">
+				<Button className="sm:w-full w-min mt-4 gap-1 justify-center hover:no-underline font-semibold transition-colors">
 					<Plus size={20} />
-					Create new playlist
+					<span className="sm:flex hidden">Create new playlist</span>
 				</Button>
 			</DialogTrigger>
 			<DialogContent>
