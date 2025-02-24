@@ -1,8 +1,8 @@
 'use client';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Artist, PartialSearchResult, SimplifiedAlbum, Track } from '@spotify/web-api-ts-sdk';
-import { SearchResultItem } from './SearchResultItem';
-import { TrackItem } from './TrackItem';
+import { SearchResultItem } from './search-result-item';
+import { TrackItem } from './track-item';
 
 export function SearchResults({ results }: { results: Required<Pick<PartialSearchResult, 'artists' | 'albums' | 'tracks'>> }) {
 	const renderResultSection = (title: string | null, items: any[], renderItem: (item: any) => React.ReactNode) => {
