@@ -20,6 +20,7 @@ type PlaybackContextType = {
 	setCurrentTime: (time: number) => void;
 	setDuration: (duration: number) => void;
 	setPlaylist: (tracks: SimplifiedTrack[]) => void;
+	playlist: SimplifiedTrack[];
 	audioRef: React.RefObject<HTMLAudioElement | null>;
 	activePanel: Panel;
 	setActivePanel: (panel: Panel) => void;
@@ -173,6 +174,7 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
 				setCurrentTime,
 				setDuration,
 				setPlaylist,
+				playlist,
 				audioRef,
 				activePanel,
 				setActivePanel,
