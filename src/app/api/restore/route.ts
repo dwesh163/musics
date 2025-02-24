@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
 import { IUser, UserModel } from '@/models/User';
 import { PlaylistModel } from '@/models/Playlist';
 import { TrackModel } from '@/models/Track';
@@ -10,7 +9,7 @@ import { IAccreditation } from '@/models/Accreditation';
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export async function GET() {
+export async function POST(request: Request) {
 	const user = await getUser();
 	if (!user) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
 
@@ -20,8 +19,7 @@ export async function GET() {
 	}
 
 	try {
-		const file = fs.readFileSync('backup.json', 'utf-8');
-		const data = JSON.parse(file);
+		const data = await request.json();
 
 		for (const userEmail of Object.keys(data.users)) {
 			const userDB = await UserModel.findOne({ email: userEmail });
