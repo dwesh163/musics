@@ -2,7 +2,7 @@
 
 import { PlaylistsType } from '@/types/playlist';
 import { useRouter } from 'next/navigation';
-import { createContext, useContext, useState, useEffect, ReactNode, useRef, useCallback } from 'react';
+import { createContext, useContext, ReactNode } from 'react';
 
 type PlaylistContextType = {
 	playlists: PlaylistsType[];
