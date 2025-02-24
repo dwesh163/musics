@@ -111,7 +111,7 @@ export const handleSignIn = async ({ user, account, profile }: { user: User; acc
 		const finalUser = existingUser ? await UserModel.findOneAndUpdate({ email }, userData, { new: true }) : await UserModel.create({ ...userData, email, id: uuid().replace(/-/g, '') });
 
 		if (!existingUser) {
-			const favourite = await createPlaylist('Favourite', finalUser._id.toString());
+			const favourite = await createPlaylist('Favourites', finalUser._id.toString());
 			const favouritePlaylist = await PlaylistModel.findOne({ id: favourite?.data?.id });
 			if (favourite.status !== 200) throw new Error('Failed to create favourite playlist');
 			await UserModel.updateOne({ _id: finalUser._id }, { favouritePlaylist: favouritePlaylist?._id });
