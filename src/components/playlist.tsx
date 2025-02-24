@@ -1,7 +1,7 @@
 'use client';
 
 import { Play, Music2 } from 'lucide-react';
-import { useEffect, useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { ScrollArea } from './ui/scroll-area';
 import moment from 'moment';
 import { usePlayback } from '@/app/playback-context';
@@ -9,7 +9,7 @@ import { TrackItem } from './track-item';
 import { PlaylistType } from '@/types/playlist';
 import { cn } from '@/lib/utils';
 
-export function PlaylistComponents({ playlist }: { playlist: PlaylistType }) {
+export function PlaylistComponent({ playlist }: { playlist: PlaylistType }) {
 	const { setPlaylist, playTrack } = usePlayback();
 	const [isScrolled, setIsScrolled] = useState(false);
 	const headerRef = useRef<HTMLDivElement>(null);
