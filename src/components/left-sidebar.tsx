@@ -62,7 +62,7 @@ export default function Sidebar({ user, playlists }: { user: User; playlists: Pl
 	};
 
 	return (
-		<aside className="w-64 lg:w-72 p-6 flex-col gap-8 border-r border-gray-800 h-screen sticky top-0 overflow-y-auto hidden md:flex">
+		<aside className="w-1/3 lg:w-72 p-6 flex-col gap-8 border-r border-gray-800 h-screen sticky top-0 overflow-y-auto hidden md:flex">
 			<div className="flex justify-between items-center">
 				<Link href="/" className="text-4xl font-black tracking-wider">
 					MUSICS

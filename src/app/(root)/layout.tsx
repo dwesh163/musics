@@ -23,7 +23,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
 				<PlaylistProvider playlists={playlists || []} favourites={favourites?.tracks.map((track) => track.id) || []}>
 					<div className="flex">
 						<LeftSidebar user={user} playlists={playlists} />
-						<main className="flex-1 sm:h-[calc(100svh-6rem)] h-[calc(100svh-8rem)]">{children}</main>
+						<main className="sm:w-2/3 w-full flex-1 sm:h-[calc(100svh-6rem)] h-[calc(100svh-8rem)]">{children}</main>
 						<RightSidebar />
 					</div>
 					<PlayerBar />
