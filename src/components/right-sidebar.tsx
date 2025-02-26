@@ -127,7 +127,7 @@ export default async function RightSidebar() {
 	}
 
 	return (
-		<aside className="w-80 p-6 border-l border-gray-800 hidden lg:block h-screen sticky top-0 overflow-y-auto">
+		<aside className="w-80 p-6 border-l border-gray-800 hidden 2xl:block h-screen sticky top-0 overflow-y-auto">
 			<div className="space-y-8">
 				<NewReleases newReleases={data.newReleases || null} />
 				<ListenMoreOften listenMoreOften={data.listenMoreOften || null} />
