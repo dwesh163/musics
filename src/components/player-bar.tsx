@@ -93,9 +93,13 @@ function ProgressBar() {
 
 const VolumeControl = () => {
 	const { audioRef, currentTrack } = usePlayback();
-	const [volume, setVolume] = useState(100);
+	const [volume, setVolume] = useState(80);
 	const [isMuted, setIsMuted] = useState(false);
-	let volumeBarRef = useRef<HTMLDivElement>(null);
+	const [pointerPosition, setPointerPosition] = useState(80);
+	const [isHovered, setIsHovered] = useState(false);
+	const [isDragging, setIsDragging] = useState(false);
+	const volumeBarRef = useRef<HTMLDivElement>(null);
+	const invisibleDivRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
 		if (audioRef.current) {
@@ -103,16 +107,33 @@ const VolumeControl = () => {
 		}
 	}, [volume, isMuted, audioRef]);
 
-	const handleVolumeChange = (e: React.MouseEvent<HTMLDivElement>) => {
-		if (volumeBarRef.current) {
+	const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+		if (isDragging && volumeBarRef.current) {
 			const rect = volumeBarRef.current.getBoundingClientRect();
 			const x = e.clientX - rect.left;
 			const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
+			setPointerPosition(percentage);
 			setVolume(percentage);
 			if (audioRef.current) {
 				audioRef.current.volume = percentage / 100;
 			}
 			setIsMuted(percentage === 0);
+		}
+	};
+
+	const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+		setIsDragging(true);
+		handleMouseMove(e);
+	};
+
+	const handleMouseUp = () => {
+		setIsDragging(false);
+	};
+
+	const handleMouseLeave = () => {
+		setIsHovered(false);
+		if (isDragging) {
+			setIsDragging(false);
 		}
 	};
 
@@ -129,12 +150,14 @@ const VolumeControl = () => {
 	};
 
 	return (
-		<div className="w-96 items-center justify-end pr-4 gap-2 md:flex hidden">
-			<Button variant="ghost" size="icon" className="hover:bg-opacity-50" onClick={toggleMute} disabled={!currentTrack}>
+		<div className="w-96 items-center justify-end pr-4 gap-3 md:flex hidden">
+			<button className="text-gray-400 hover:text-white" onClick={toggleMute} disabled={!currentTrack}>
 				{isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
-			</Button>
-			<div ref={volumeBarRef} className="w-24 h-1 bg-gray-700 rounded-full cursor-pointer" onClick={handleVolumeChange}>
-				<div className="h-full bg-white rounded-full" style={{ width: `${volume}%` }} />
+			</button>
+			<div ref={invisibleDivRef} className="w-24 h-6 bg-transparent flex justify-center items-center cursor-pointer" onMouseMove={handleMouseMove} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} onMouseLeave={handleMouseLeave} onMouseEnter={() => setIsHovered(true)}>
+				<div ref={volumeBarRef} className="relative w-24 h-1 bg-gray-700 rounded-full" onMouseEnter={() => setIsHovered(true)}>
+					<div className={`h-full ${isHovered || isDragging ? 'bg-blue-500' : 'bg-white'} rounded-full`} style={{ width: `${pointerPosition}%` }} />
+				</div>
 			</div>
 		</div>
 	);
