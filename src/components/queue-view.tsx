@@ -21,11 +21,11 @@ export function QueueView() {
 
 	const Content =
 		playlist.length === 0 ? (
-			<div className="h-[70vh] p-4 text-center flex justify-center items-center text-gray-400">
+			<div className="sm:h-96 h-[70vh] p-4 text-center flex justify-center items-center text-gray-400">
 				<p>Queue is empty</p>
 			</div>
 		) : (
-			<div className="max-h-[70vh] pb-16 overflow-y-auto">
+			<div className="sm:max-h-96 max-h-[70vh] pb-16 overflow-y-auto">
 				{playlist.map((track) => (
 					<div key={track.id} className={cn('flex items-center gap-3 p-3 sm:hover:bg-gray-800 transition-colors', currentTrack?.id === track.id && 'bg-card/90')}>
 						<div className="relative group flex-shrink-0">
