@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { usePlayback } from '@/app/playback-context';
 import { ListMusic, Play, Pause, ChevronDown } from 'lucide-react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
@@ -21,7 +20,7 @@ function Track({ track, currentTrack, playTrack, isPlaying }: any) {
 	return (
 		<div className={cn('flex items-center gap-3 p-3 sm:hover:bg-gray-800 transition-colors', currentTrack?.id === track.id && 'bg-card/90')}>
 			<div className="relative group flex-shrink-0">
-				<Image src={track.images[0].url} alt={track.name} width={40} height={40} className="rounded" />
+				<img src={track.images[0].url} alt={track.name} width={40} height={40} className="rounded" />
 				<button onClick={() => playTrack(track)} className={cn('absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity', currentTrack?.id === track.id && 'opacity-100')}>
 					{currentTrack?.id === track.id && isPlaying ? <Pause size={20} /> : <Play size={20} />}
 				</button>
