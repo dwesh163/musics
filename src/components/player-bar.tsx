@@ -1,7 +1,6 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import { Play, Pause, SkipBack, SkipForward, Heart, Volume2, VolumeX, Shuffle, Repeat, Loader2, ChevronDown } from 'lucide-react';
-import Image from 'next/image';
 import { Button } from './ui/button';
 import { usePlayback } from '@/app/playback-context';
 import { cn } from '@/lib/utils';
@@ -26,7 +25,7 @@ const TrackInfo = ({ currentTrack, onOpen }: { currentTrack: SimplifiedTrack; on
 	return (
 		<div className="flex items-center justify-between sm:gap-4 gap-2 sm:w-96 w-full h-12 sm:h-full" onClick={onOpen}>
 			<div className="flex items-center gap-2">
-				<Image src={currentTrack?.images[0].url} alt="Now Playing" width={100} height={100} className="h-10 w-10 sm:h-14 sm:w-14 rounded-[var(--radius)]" />
+				<img src={currentTrack?.images[0].url} alt="Now Playing" width={100} height={100} className="h-10 w-10 sm:h-14 sm:w-14 rounded-[var(--radius)]" />
 				<div>
 					<h4 className="font-medium sm:text-base text-sm">{removeParenthesesContent(currentTrack?.name)}</h4>
 					<p className="sm:text-sm text-xs text-gray-400">
@@ -305,7 +304,7 @@ const FullPlayer = ({ onClose }: { onClose: () => void }) => {
 			</div>
 
 			<div className="flex-1 flex flex-col items-center justify-center px-8 gap-8">
-				<Image src={currentTrack?.images[0]?.url || '/default-image.png'} alt="Now Playing" width={280} height={280} className="rounded-lg shadow-xl" />
+				<img src={currentTrack?.images[0]?.url || '/default-image.png'} alt="Now Playing" width={280} height={280} className="rounded-lg shadow-xl" />
 
 				<div className="w-full text-center">
 					<h3 className="text-xl font-bold mb-2">{removeParenthesesContent(currentTrack?.name ?? '')}</h3>
