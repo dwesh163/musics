@@ -130,10 +130,18 @@ export function TrackItem({ track, index = 0, config = DEFAULT_CONFIG }: TrackIt
 									</button>
 								</DropdownMenuTrigger>
 								<DropdownMenuContent align="end" className="w-52">
-									<DropdownMenuItem className="cursor-pointer focus:bg-white/5" onSelect={handleGoToAlbum}>
-										<ListMusic className="size-4" />
-										Go to album
-									</DropdownMenuItem>
+									{!track.album?.id?.startsWith('G-') && (
+										<DropdownMenuItem className="cursor-pointer focus:bg-white/5" onSelect={handleGoToAlbum}>
+											<ListMusic className="size-4" />
+											Go to album
+										</DropdownMenuItem>
+									)}
+									{!track.artists[0]?.id?.startsWith('G-') && (
+										<DropdownMenuItem className="cursor-pointer focus:bg-white/5" onSelect={handleGoToArtist}>
+											<ListMusic className="size-4" />
+											Go to artist
+										</DropdownMenuItem>
+									)}
 									<DropdownMenuItem className="cursor-pointer focus:bg-white/5" onSelect={handleGoToArtist}>
 										<ListMusic className="size-4" />
 										Go to artist
